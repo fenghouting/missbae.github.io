@@ -1,0 +1,744 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.0" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="JavaScript,模块化," />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.1.0" />
+
+
+
+
+
+
+<meta name="description" content="在ES2015发布后，JavaScript最终也有了一个标准的模块化方案，而同时从webpack开始，也带来了一波“一切皆模块”的潮流。整个2015-2016的前端发展中，除去在UI层不断的努力和突破外，几乎每一件事都和模块化脱不开关系。
+本文也试图从几个方面简单地说一下模块化，并分析一些在模块化实施中产生的误区。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="强迫症的模块化">
+<meta property="og:url" content="http://yoursite.com/2017/02/01/强迫症的模块化/index.html">
+<meta property="og:site_name" content="mi2sbae's Personal Blog">
+<meta property="og:description" content="在ES2015发布后，JavaScript最终也有了一个标准的模块化方案，而同时从webpack开始，也带来了一波“一切皆模块”的潮流。整个2015-2016的前端发展中，除去在UI层不断的努力和突破外，几乎每一件事都和模块化脱不开关系。
+本文也试图从几个方面简单地说一下模块化，并分析一些在模块化实施中产生的误区。">
+<meta property="og:updated_time" content="2017-02-01T13:19:59.883Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="强迫症的模块化">
+<meta name="twitter:description" content="在ES2015发布后，JavaScript最终也有了一个标准的模块化方案，而同时从webpack开始，也带来了一波“一切皆模块”的潮流。整个2015-2016的前端发展中，除去在UI层不断的努力和突破外，几乎每一件事都和模块化脱不开关系。
+本文也试图从几个方面简单地说一下模块化，并分析一些在模块化实施中产生的误区。">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Pisces',
+    sidebar: {"position":"left","display":"post"},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2017/02/01/强迫症的模块化/"/>
+
+
+
+
+
+  <title> 强迫症的模块化 | mi2sbae's Personal Blog </title>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+
+
+
+
+
+
+
+
+
+
+  
+  
+    
+  
+
+  <div class="container one-collumn sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-meta ">
+  
+
+  <div class="custom-logo-site-title">
+    <a href="/"  class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <span class="site-title">mi2sbae's Personal Blog</span>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+    
+      <p class="site-subtitle"></p>
+    
+</div>
+
+<div class="site-nav-toggle">
+  <button>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+  </button>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+  <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/02/01/强迫症的模块化/">
+
+  <span style="display:none" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <meta itemprop="name" content="Guo Fan">
+    <meta itemprop="description" content="">
+    <meta itemprop="image" content="http://okoaqgr86.bkt.clouddn.com/avatar.jpg">
+  </span>
+
+  <span style="display:none" itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+    <meta itemprop="name" content="mi2sbae's Personal Blog">
+    <span style="display:none" itemprop="logo" itemscope itemtype="http://schema.org/ImageObject">
+      <img style="display:none;" itemprop="url image" alt="mi2sbae's Personal Blog" src="">
+    </span>
+  </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                强迫症的模块化
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2017-02-01T17:16:56+08:00">
+                2017-02-01
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+              <span class="post-comments-count">
+                <span class="post-meta-divider">|</span>
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-comment-o"></i>
+                </span>
+                <a href="/2017/02/01/强迫症的模块化/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count ds-thread-count" data-thread-key="2017/02/01/强迫症的模块化/" itemprop="commentCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+
+          
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>在ES2015发布后，JavaScript最终也有了一个标准的模块化方案，而同时从webpack开始，也带来了一波“一切皆模块”的潮流。整个2015-2016的前端发展中，除去在UI层不断的努力和突破外，几乎每一件事都和模块化脱不开关系。</p>
+<p>本文也试图从几个方面简单地说一下模块化，并分析一些在模块化实施中产生的误区。<br><a id="more"></a></p>
+<h2 id="模块的本质"><a href="#模块的本质" class="headerlink" title="模块的本质"></a>模块的本质</h2><p>模块化顾名思义，指的必然是将程序拆分为多个“模块”，使用模块间通信的方式进行交互。这和其它对程序逻辑进行拆分的手段是一样的，无论是拆成类、拆成对象还是拆成啥，其目的无非是隔离内部的实现以及声明对外的接口。</p>
+<p>事实上自远古时代起，JavaScript就在努力进行实现封装的尝试，无论是通过IIFE避免全局变量，还是基于Namespace进行管理，以至后期的AMD、CJS社区模块化方案，直到现在的ES Module标准模块化，无不以上为目的。</p>
+<p>在模块化的思想里，一个模块应该是：</p>
+<ol>
+<li>需要一系列的依赖。</li>
+<li>涉及一个内部的实现。</li>
+<li>提供一系列的接口。</li>
+</ol>
+<p>一个模块的接口既然是它的结构表达，就如同一个类的属性和方法一样，应该是一个在同版本内稳定的签名。在实际的版本管理中，对于模块应该严格遵守semver等版本号规则，当模块对外声明的接口有所变化时，通过不同层级的版本号的变化以示区分。</p>
+<h2 id="从ES-Module开始"><a href="#从ES-Module开始" class="headerlink" title="从ES Module开始"></a>从ES Module开始</h2><p>在ES2015发布后，ES Module也事实上成为了JavaScript的模块标准。从语法上来看，ES Module与以往社区主导的AMD、CJS等都有不同，主要体现在：</p>
+<ol>
+<li><strong>import</strong>和<strong>export</strong>是语法静态的，即通过语法的解析就可以得到，而不需要实际运行。</li>
+<li><strong>import</strong>的对象是<strong>export</strong>，而不是模块本身，在粒度上比AMD和CJS要更细化。</li>
+<li><strong>export</strong>的是一个引用（或者说Binding），而不是一个值。</li>
+</ol>
+<p>ES Module的这些限制大大增加了语言的静态性，从而也收获了不少的优势：</p>
+<ol>
+<li>可以通过语法分析确立模块间的关系，从而为构建等后续工作提供基础。</li>
+<li>可以应用Tree Shaking等手段进行代码的消除。众所周知JavaScript因为其动态性，导致Code Elimination非常难做，而静态化的依赖声明以及依赖粒度为export则很大程度上简化了这一过程。</li>
+<li>使用引用作为export有效解决不少情况下循环引用的问题。</li>
+</ol>
+<p>从这一分析中可以看到，语言层面的静态性是对除编程以外的各个工作环节都有很大的帮助的，作为长久以来一直基于JavaScript的弱类型、动态性进行编程的工程师，也应该借这次机会重新认识和审视一下类型和静态性的优势。<strong>随着应用程序的复杂度的提升，我们的设计应该更倾向于更多使用强类型和静态性支撑程序的强壮性和可维护性。</strong></p>
+<h2 id="全模块化设计"><a href="#全模块化设计" class="headerlink" title="全模块化设计"></a>全模块化设计</h2><p>当前另一个流行的概念叫“一切皆模块”，由前端构建工具<a href="https://webpack.github.io/" target="_blank" rel="external">webpack</a>所引领。在这一概念下，开发者倾向于认为模块化不仅仅应用于JavaScript，任何的资源都可以被抽象为模块，并通过统一的方式（webpack中使用<strong>require</strong>）进行管理。</p>
+<p>然而，在我看来，当前的前端远没有达到所谓的“全模块化设计”，更多只是浮于表面跟随webpack实现的一种表现而已。</p>
+<p>在当前使用webpack的场景中，工程师会在JavaScript中使用<strong>require(‘css!./style.css’)</strong>声明对一个样式的依赖，会使用<strong>require(‘image!./logo.png’)</strong>声明对一个图片的依赖。然后他们会说“我们将样式和图片都作为模块来管理了，所以我们是一切皆模块的忠实履行者”。</p>
+<p>但是，事实上大家都忽略了几个很重要的因素。</p>
+<h3 id="模块与资源的区别"><a href="#模块与资源的区别" class="headerlink" title="模块与资源的区别"></a>模块与资源的区别</h3><p>首先，我们并没有遵循一个统一的模块结构。如果以ES Module作为模块结构的标准，我们的JavaScript可以很容易地做到声明依赖和接口，并封装一个内部实现，但是对于其它类型的资源，我们是否有考虑过作为模块时，它是怎么样的？</p>
+<p>这就很像我们对RESTful的实施，玩了好多年最后也就是URL长得规则一点，用了用<strong>PUT</strong>和<strong>DELETE</strong>，而没有把RESTful的思想应用到系统的设计中去，把好好的一篇博士论文硬是玩成了表面上的无聊玩意，估计是Roy Thomas Fielding博士万万想不到的。</p>
+<p>举一个例子，当我们创建一个<strong>style.css</strong>文件时，我们在心里想的依旧是“建立了一个样式文件”，而不是“创建了一个样式模块”，从而我们忽略了对一系列问题的思考：</p>
+<ol>
+<li>这个模块的依赖是什么？</li>
+<li>这个模块对外的接口（导出）是什么？</li>
+<li>模块的依赖通过怎么样的语法进行声明？</li>
+<li>模块的依赖和接口如何支持静态（非运行时）的分析？</li>
+<li>当前样式的语法是否足够我进行模块的声明，而不是简单地编写样式？</li>
+</ol>
+<p>将这些问题落地细化，就可能转为更实际的内容（css本身语法太弱，此处以less为例）：</p>
+<ol>
+<li>JavaScript的依赖是到<strong>export</strong>级别的，因此一个<strong>.less</strong>依赖另一个<strong>.less</strong>文件并不合适，需要细化至<strong>selector</strong>或<strong>mixin</strong>、<strong>function</strong>级别。</li>
+<li>因此一个样式模块的接口（导出）应该是一系列的<strong>selector</strong>、<strong>mixin</strong>和<strong>function</strong>，而不是一段文本甚至啥也没有。</li>
+<li>less的语法是不足以声明这么细粒度的依赖的，事实上根本不存在一个扩展css的语言支持这个，我们需要自己动手。</li>
+</ol>
+<p>所以，如果是全模块化的设计的话，我们大概就会再去实现一个CSS超集语言了吧……<br>如果扩展开来，还会有很多有趣的问题，比如：</p>
+<ol>
+<li>一个<strong>.ico</strong>类型的模块，它的导出是不是应该是不同尺寸的图像？</li>
+<li>一个模块类型的模块，导出其实应该是多个Block而不是一个渲染函数？</li>
+<li>作为入口模块的HTML，应该如何声明对其它模块的依赖？</li>
+</ol>
+<p>其中第3个问题尤为有趣，因为在WHATWG的标准里，一个HTML引入一个JavaScript的模块是这样的：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">script type=&quot;module&quot; src=&quot;./entry.js&quot;&gt;&lt;/script&gt;</div></pre></td></tr></table></figure></p>
+<p>可以看到，这里其实是引入了整个模块，而不是模块的一部分<strong>export</strong>，这是不符合ES对模块间依赖的定义的。也就是说，其实在WHATWG的标准里，根本没把HTML与JavaScript之间的关系作为模块间的关系来考虑，那么我们在实际实施全模块化设计的时候，又要做怎么样的扩展才能配合真正的全模块化设计呢？</p>
+<h3 id="模块类型的误区"><a href="#模块类型的误区" class="headerlink" title="模块类型的误区"></a>模块类型的误区</h3><p>在实际的模块化实施过程中，另一个很大的误区就是使用资源类型来决定模块类型。比如只要是<strong>.js</strong>文件，一概当作普通的ES Module处理，只要是<strong>.less</strong>文件，一概使用<strong>css</strong>插件处理。</p>
+<p>但实际上，在全模块化设计中，根本不存在“资源”这样的一个概念，后缀只是URL和文件系统上的表达，与模块的真正含义并不相关。</p>
+<p>以一个实际的场景为例：</p>
+<blockquote>
+<p>在系统中存在一些变量，这些变量在开发环境、测试环境和线上环境有不同的值。<br>系统建立了一个变量模块，对应的文件为variables.js。该模块使用多个export提供不同的变量。</p>
+</blockquote>
+<p>到此为止，我们就很容易犯一个错误，我们会这样去引用这个模块：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">import &#123;connectionTimeout, remoteBaseURL&#125; from &apos;variables&apos;;</div></pre></td></tr></table></figure></p>
+<p>并不是说这样会让系统挂掉，但这绝对不是一个合理的设计。因为在实际的设计中，这个模块的作用是“变量”，而非“程序”，所以它在使用的时候，也不应该被当作程序来引用，正确的方法应该是：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">import &#123;connectionTimeout, remoteBaseURL&#125; from &apos;var!/variables.js&apos;;</div></pre></td></tr></table></figure></p>
+<p>虽然可能只是细微的变化，虽然要为此多写一个Loader Plugin，虽然可能在实际执行时根本没有变化，但这意味着我们确实是以模块为粒度进行设计，而不是单纯地作文件-模块的映射。</p>
+<p>当然要说优势的话也不是没有，在这样的设计下，我们可以建立<strong>variables-dev.js</strong>、<strong>variables-qa.js</strong>、<strong>variables-online.js</strong>等多套变量，通过<strong>var</strong>这个Loader Plugin控制具体加载的变量集，而不需要使用类似<strong>TextReplacer</strong>之类基于文件的工具进行处理，让整个运行和构建过程也得以靠近模块化。</p>
+<h3 id="远程服务"><a href="#远程服务" class="headerlink" title="远程服务"></a>远程服务</h3><p>最后一个相对极端的情况是，我们将前端的所有资源认为模块后，却忽略了其它远程服务，而在全模块化的设计中，根本不需要区分前端后端远程本地，一切均可以是一个模块。<br>所以我们在代码中经常出现的：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">let response = await ajax(&apos;GET&apos;, &apos;/users/current&apos;);</div></pre></td></tr></table></figure></p>
+<p>其实并不是“那么的模块化”，不如尝试变成这样：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">import &#123;get as getCurrentUser&#125; from &apos;restResouce!/users/currentUser&apos;;</div><div class="line">let response = await getCurrentUser();</div></pre></td></tr></table></figure>
+<p>配合模块化的静态依赖分析等特点，将整个系统全部作为模块来管理后，我们甚至可以基于此对Web API进行管理，比如移除已经不再使用的接口（其实就是Tree Shaking）等工作变得非常简便。</p>
+<p>当然这对于整个系统的设计挑战是非常大的，即便真的理解这是一个很好的模块化方向，也大概没什么工程会照此执行吧。</p>
+<h3 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h3><p>本文旨在简单介绍模块化的概念后，重点提出在日常模块化实施中应当被注意的几个点，包括：</p>
+<ol>
+<li>从ES Module的静态性出发，重新审视强类型和静态性对构建应用程序的重要性，在实际设计和实现中更多地利用这些概念提升健壮性和可维护性。</li>
+<li>在全模块化的设计中，将资源的概念摒弃，真正从模块的角度思考每一件事物。</li>
+<li>用模块的类型决定模块的引入，而不是模块对应的文件或资源的类型。</li>
+<li>除前端自有的资源外，其它外部的服务同样可用模块化的方式进行定义。</li>
+</ol>
+<blockquote>
+<p>原文出处：<a href="http://efe.baidu.com/blog/an-obsessive-view-on-modularization/" target="_blank" rel="external">百度EFE</a></p>
+</blockquote>
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/JavaScript/" rel="tag"># JavaScript</a>
+          
+            <a href="/tags/模块化/" rel="tag"># 模块化</a>
+          
+        </div>
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2017/01/31/JavaScript的原型继承原理/" rel="next" title="JavaScript的原型继承原理">
+                <i class="fa fa-chevron-left"></i> JavaScript的原型继承原理
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+          
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+      <div class="ds-thread" data-thread-key="2017/02/01/强迫症的模块化/"
+           data-title="强迫症的模块化" data-url="http://yoursite.com/2017/02/01/强迫症的模块化/">
+      </div>
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="http://okoaqgr86.bkt.clouddn.com/avatar.jpg"
+               alt="Guo Fan" />
+          <p class="site-author-name" itemprop="name">Guo Fan</p>
+          <p class="site-description motion-element" itemprop="description"></p>
+        </div>
+        <nav class="site-state motion-element">
+        
+          
+            <div class="site-state-item site-state-posts">
+              <a href="/archives">
+                <span class="site-state-item-count">5</span>
+                <span class="site-state-item-name">日志</span>
+              </a>
+            </div>
+          
+
+          
+
+          
+            <div class="site-state-item site-state-tags">
+              <a href="/tags">
+                <span class="site-state-item-count">5</span>
+                <span class="site-state-item-name">标签</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+        </div>
+
+        
+        
+
+        
+        
+
+        
+
+
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#模块的本质"><span class="nav-number">1.</span> <span class="nav-text">模块的本质</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#从ES-Module开始"><span class="nav-number">2.</span> <span class="nav-text">从ES Module开始</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#全模块化设计"><span class="nav-number">3.</span> <span class="nav-text">全模块化设计</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#模块与资源的区别"><span class="nav-number">3.1.</span> <span class="nav-text">模块与资源的区别</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#模块类型的误区"><span class="nav-number">3.2.</span> <span class="nav-text">模块类型的误区</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#远程服务"><span class="nav-number">3.3.</span> <span class="nav-text">远程服务</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#总结"><span class="nav-number">3.4.</span> <span class="nav-text">总结</span></a></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy; 
+  <span itemprop="copyrightYear">2017</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Guo Fan</span>
+</div>
+
+
+<div class="powered-by">
+  由 <a class="theme-link" href="https://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Pisces
+  </a>
+</div>
+
+
+        
+
+        
+      </div>
+    </footer>
+
+    <div class="back-to-top">
+      <i class="fa fa-arrow-up"></i>
+    </div>
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.0"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.0"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.0"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.0"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.0"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.0"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.0"></script>
+
+
+
+  
+
+  
+    
+  
+
+  <script type="text/javascript">
+    var duoshuoQuery = {short_name:"mi2sbae"};
+    (function() {
+      var ds = document.createElement('script');
+      ds.type = 'text/javascript';ds.async = true;
+      ds.id = 'duoshuo-script';
+      ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+      ds.charset = 'UTF-8';
+      (document.getElementsByTagName('head')[0]
+      || document.getElementsByTagName('body')[0]).appendChild(ds);
+    })();
+  </script>
+
+  
+    
+    
+    <script src="/lib/ua-parser-js/dist/ua-parser.min.js?v=0.7.9"></script>
+    <script src="/js/src/hook-duoshuo.js"></script>
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+
+  
+
+  
+
+  
+
+  
+
+
+</body>
+</html>
